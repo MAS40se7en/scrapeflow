@@ -40,9 +40,9 @@ export default function DesktopSidebar() {
                 <Logo />
             </div>
             <div className="p-2">TODO</div>
-            <div className='flex flex-col p-2'>
+            <div className='flex flex-col p-2 gap-2'>
                 {routes.map((route) => (
-                    <Link key={route.href} href={route.href} className={buttonVariants({ variant: activeRoute.href === route.href ? "sidebarActiveItem" : "sidebarItem" })}>
+                    <Link key={route.href} href={`/${route.href}`} className={buttonVariants({ variant: activeRoute.href === route.href ? "sidebarActiveItem" : "sidebarItem" })}>
                         <route.icon size={20} />
                         {route.label}
                     </Link>
