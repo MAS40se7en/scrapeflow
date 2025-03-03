@@ -33,7 +33,7 @@ export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
                     </div>
                     <div>
                         <h3 className='text-base font-bold text-muted-foreground fle items-center'>
-                            <Link href={`/workflows/editor/${workflow.id}`}>{workflow.name}</Link>
+                            <Link href={`/workflow/editor/${workflow.id}`}>{workflow.name}</Link>
                             {isDraft && (
                                 <span className='ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full'>
                                     Draft
@@ -44,7 +44,7 @@ export default function WorkflowCard({ workflow }: { workflow: Workflow }) {
                 </div>
 
                 <div className='flex items-center space-x-2'>
-                    <Link href={`/workflows/editor/${workflow.id}`}
+                    <Link href={`/workflow/editor/${workflow.id}`}
                         className={cn(
                             buttonVariants({
                                 variant: "outline",
