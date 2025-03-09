@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AppProviders>
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </AppProviders>
       </body>
       <Toaster richColors />

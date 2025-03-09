@@ -8,8 +8,8 @@ import { AppNode } from '@/types/appNode';
 import BrowserInstanceParam from './param/BrowserInstanceParam';
 
 export default function NodeParamField({
-    param, nodeId
-}: {param: TaskParam, nodeId: string}) {
+    param, nodeId, disabled
+}: {param: TaskParam, nodeId: string, disabled: boolean}) {
     
     const { updateNodeData, getNode } = useReactFlow();
 
@@ -34,6 +34,7 @@ export default function NodeParamField({
                 <StringParam 
                         param={param} 
                         value={value}
+                        disabled={disabled}
                         updateNodeParamValue={updateNodeParamValue}    
                     />
             );

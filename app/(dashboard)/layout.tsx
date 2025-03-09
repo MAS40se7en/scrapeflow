@@ -1,5 +1,4 @@
 import BreadcrumbHeader from '@/components/BreadcrumbHeader'
-import { AppProviders } from '@/components/providers/AppProviders'
 import DesktopSidebar from '@/components/Sidebar'
 import { ModeToggle } from '@/components/ThemeModeToggle'
 import { Separator } from '@/components/ui/separator'
@@ -21,11 +20,9 @@ export default function layout({ children }: { children: React.ReactNode}) {
                 </div>
             </header>
             <Separator />
-            <div className='overflow-auto'>
-                <div className='flex-1 container py-4 text-accent-foreground px-10'>
-                    <AppProviders>
+            <div className='overflow-auto px-3'>
+                <div className='flex-1 container py-4'>
                         {children}
-                    </AppProviders>
                 </div>
             </div>
         </div>

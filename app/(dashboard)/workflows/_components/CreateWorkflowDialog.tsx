@@ -27,8 +27,12 @@ export default function CreateWorkflowDialog({triggerText}: {triggerText?: strin
     const { mutate, isPending } = useMutation(
         {
             mutationFn: CreateWorkflow,
-            onSuccess: () => {
+            onSuccess: (data) => {
                 toast.success("Workflow created successfully", { id: "create-workflow" });
+
+                if (data?.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                }
             },
             onError: () => {
                 toast.error("Failed to create workflow", { id: "create-workflow" });
@@ -48,7 +52,7 @@ export default function CreateWorkflowDialog({triggerText}: {triggerText?: strin
         setOpen(open);
     }}>
         <DialogTrigger asChild>
-            <Button>{triggerText ?? "Create workflow"}</Button>
+            <Button className='dark:text-white'>{triggerText ?? "Create workflow"}</Button>
         </DialogTrigger>
         <DialogContent className='px-0'>
             <CustomDialogHeader
