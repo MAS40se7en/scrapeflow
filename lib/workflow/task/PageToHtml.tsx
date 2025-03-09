@@ -1,10 +1,12 @@
 import { TaskParamType, TaskType } from "@/types/task";
+import { WorkflowTask } from "@/types/workflow";
 import { CodeIcon, LucideProps } from "lucide-react";
 import "tailwindcss"
 
 export const PageToHtmlTask = {
     type: TaskType.PAGE_TO_HTML,
     label: "Get HTML from Page",
+    credits: 2,
     icon: (props: LucideProps) => (
         <CodeIcon className="stroke-rose-400" {...props} />
     ),
@@ -26,4 +28,4 @@ export const PageToHtmlTask = {
             type: TaskParamType.BROWSER_INSTANCE
         }
     ]
-}
+} satisfies WorkflowTask;
