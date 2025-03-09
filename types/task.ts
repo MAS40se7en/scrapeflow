@@ -15,5 +15,6 @@ export interface TaskParam {
     helperText?: string;
     required?: boolean;
     hideHandle?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }

@@ -4,6 +4,7 @@ import { TaskParam, TaskType } from "./task";
 export interface AppNodeData {
     type: TaskType;
     inputs: Record<string, string>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 

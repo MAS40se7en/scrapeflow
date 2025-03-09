@@ -42,6 +42,7 @@ export default function NodeParamField({
             return (
                 <BrowserInstanceParam 
                     param={param}
+                    value={value}
                     updateNodeParamValue={updateNodeParamValue}
                 />
             )
