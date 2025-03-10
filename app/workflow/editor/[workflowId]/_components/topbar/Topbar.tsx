@@ -11,10 +11,11 @@ interface Props {
     title: string;
     subTitle?: string;
     workflowId: string;
+    hideButtons?: boolean
 }
 
 export default function Topbar({
-    title, subTitle, workflowId
+    title, subTitle, workflowId, hideButtons
 }: Props) {
     const router = useRouter();
   return (
@@ -35,8 +36,12 @@ export default function Topbar({
             </div>
         </div>
         <div className='flex gap-1 flex-1 justify-end'>
-                <ExecuteBtn workflowId={workflowId} />
-                <SaveBtn workflowId={workflowId} />
+                {!hideButtons && (
+                    <>
+                        <ExecuteBtn workflowId={workflowId} />
+                        <SaveBtn workflowId={workflowId} />
+                    </>
+                )}
         </div>
     </header>
   )

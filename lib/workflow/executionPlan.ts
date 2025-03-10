@@ -1,23 +1,45 @@
-import { AppNode } from "@/types/appNode";
+import { AppNode, AppNodeMissingInputs } from "@/types/appNode";
 import { WorkflowExecutionPlan, WorkflowExecutionPlanPhase } from "@/types/workflow";
-import { Edge, getIncomers } from "@xyflow/react";
+import { Edge } from "@xyflow/react";
 import { TaskRegistry } from "./task/registry";
+
+export const enum FlowToExecutionPlanValidationError {
+    'NO_ENTRY_POINT',
+    'INVALID_INPUTS'
+}
 
 type FlowToExecutionPlanType = {
     executionPlan?: WorkflowExecutionPlan;
+    error?: {
+        type: FlowToExecutionPlanValidationError;
+        invalidElements?: AppNodeMissingInputs[];
+    }
 }
 
 export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]):
     FlowToExecutionPlanType {
 
-        if (!nodes || !edges) return {};
         const entryPoint = nodes.find((node) => TaskRegistry[node.data.type].isEntryPoint);
 
         if (!entryPoint) {
-            throw new Error("TODO: HANDLE THIS ERROR (NO ENTRY POINT FOUND)")
+            return {
+                error: {
+                    type: FlowToExecutionPlanValidationError.NO_ENTRY_POINT
+                }
+            }
         }
 
+        const inputsWithErrors: AppNodeMissingInputs[] = []
+
         const planned = new Set<string>();
+
+        const invalidInputs = getInvalidInputs(entryPoint, edges, planned);
+        if (invalidInputs.length > 0) {
+            inputsWithErrors.push({
+                nodeId: entryPoint.id,
+                inputs: invalidInputs
+            })
+        }
     
         const executionPlan: WorkflowExecutionPlan = [
             {
@@ -26,9 +48,11 @@ export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]):
             }
         ];
 
+        planned.add(entryPoint.id);
+
         for (
             let phase = 2;
-            phase <= nodes.length || planned.size < nodes.length;
+            phase <= nodes.length && planned.size < nodes.length;
             phase++
         ) {
                 const nextPhase: WorkflowExecutionPlanPhase = { phase, nodes: [] };
@@ -48,17 +72,31 @@ export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]):
                             //this means that this particular node has an invalid input,
                             //which means that the workflow is invalid
                             console.error("invalid inputs", currentNode, invalidInputs);
-                            throw new Error("TODO: HANDLE ERROR 1")
+                            inputsWithErrors.push({
+                                nodeId: currentNode.id,
+                                inputs: invalidInputs
+                            })
                         } else {
                             continue;
                         }
                     }
 
                     nextPhase.nodes.push(currentNode);
-                    planned.add(currentNode.id);
+                }
+                for (const node of nextPhase.nodes) {
+                    planned.add(node.id);
                 }
 
                 executionPlan.push(nextPhase);
+        }
+
+        if (inputsWithErrors.length > 0) {
+            return {
+                error: {
+                    type: FlowToExecutionPlanValidationError.INVALID_INPUTS,
+                    invalidElements: inputsWithErrors
+                }
+            }
         }
 
         return { executionPlan };
@@ -82,8 +120,9 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
         //there is an output linked to the current input
         const incomingEdges = edges.filter((edge) => edge.target === node.id);
 
+        //checking if the incoming edges are connected to the input we are checking
         const inputLinkedToOutput = incomingEdges.find(
-            (edge) => edge.target === node.id
+            (edge) => edge.targetHandle === input.name
         );
 
         const requiredInputProvidedByVisitedOutput =
@@ -94,7 +133,7 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
             // provided by a task that is already planned
             continue;
         } else if (!input.required) {
-            //if the input is not required by there is an output linked
+            //if the input is not required but there is an output linked
             // to it then we need to be sure that the output is provided
             if (!inputLinkedToOutput) continue;
             if (inputLinkedToOutput && planned.has(inputLinkedToOutput.source)) {
@@ -107,6 +146,19 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
     }
 
     return invalidInputs;
+}
 
+function getIncomers(node: AppNode, nodes: AppNode[], edges: Edge[]) {
+    if (!node.id) {
+        return [];
+    }
 
+    const incomersIds = new Set();
+    edges.forEach((edge) => {
+        if (edge.target === node.id) {
+            incomersIds.add(edge.source);
+        }
+    });
+
+    return nodes.filter((n) => incomersIds.has(n.id));
 }
