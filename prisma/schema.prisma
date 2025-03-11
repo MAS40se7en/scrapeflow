@@ -55,7 +55,7 @@ model ExecutionPhase {
   inputs      String?
   outputs     String?
 
-  creditsCost Int?
+  creditsConsumed Int?
 
   workflowExecutionId String
 
