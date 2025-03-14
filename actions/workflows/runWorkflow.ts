@@ -6,6 +6,7 @@ import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
 import { TaskRegistry } from "@/lib/workflow/task/registry";
 import { ExecutionPhaseStatus, ExecutionStatus, ExecutionTrigger, WorkflowExecutionPlan } from "@/types/workflow";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export async function RunWorkflow(form: { workflowId: string; flowDefinition?: string}) {
     const { userId } = await auth();
@@ -84,5 +85,5 @@ export async function RunWorkflow(form: { workflowId: string; flowDefinition?: s
 
     ExecuteWorkflow(execution.id)
 
-    return { success: true, redirectUrl: `/workflow/runs/${workflowId}/${execution.id}` };
+    redirect(`/workflow/runs/${workflowId}/${execution.id}`);
 }
